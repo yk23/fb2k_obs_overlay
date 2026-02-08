@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Now Playing</title>
+    <link rel="stylesheet" type="text/css" href="/css">
+</head>
+<body>
+    <div id="app-container" style="width: {{ app_width }}px; height: {{ app_height }}px;">
+        <div id="song-nothing" class="info">
+            <p>jerr0</p>
+        </div>
+        <div id="song-details" class="hidden">
+            <div id="albumart-container">
+                <img id="albumart" alt="" src="">
+            </div>
+            <div id="song-info-text">
+                <div id="title-wrapper">
+                    <div id="title" class="info"></div>
+                </div>
+                <div id="artist" class="info"></div>
+                <div id="album" class="info"></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="/js"></script>
+    <script type="text/javascript">
+        const intervalId = setInterval(updateNowPlaying, 3000);
+    </script>
+</body>
+</html>

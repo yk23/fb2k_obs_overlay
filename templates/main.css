@@ -1,0 +1,128 @@
+/* Main app */
+#app-container {
+    border-radius: 20px;
+    font-family: 'Verdana', sans-serif;
+    background-color: rgba(80, 80, 80, 0.5);
+    color: rgba(240, 240, 240, 1.0);
+    align-items: center;      /* Vertical center */
+    justify-content: center;  /* Horizontal center */
+    display: flex;
+    overflow: hidden;
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;     /* Firefox */
+    padding: 10px;  /* top right bottom left */
+}
+
+#song-details {
+    width: calc(100%);  /* Account for container padding */
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 40px;
+}
+
+#song-nothing {
+    font-weight: bold;
+    font-size: 52px;
+}
+
+#albumart-container {
+    flex-shrink: 0;
+}
+
+#albumart {
+    max-height: 100%;
+    border-radius: 15px;
+    transition: transform 0.3s ease, opacity 0.3s ease;
+    object-fit: cover;   /* Ensures image covers the area */
+}
+
+#song-info-text {
+    flex: 1;
+    text-align: left;
+    max-width: calc(100% - 20px);  /* Account for album art (150px) + gap (20px) + padding */
+    min-width: 0;  /* Important for flex children to shrink properly */
+    padding-bottom: 5px;
+}
+
+#title {
+    font-size: 64px;
+    font-weight: 700;
+    margin-bottom: 10px;
+    overflow: hidden;
+    white-space: nowrap;
+    display: inline-block;
+}
+
+#title.scrolling {
+    animation: scroll-left 15s linear infinite;
+    padding-right: 0;  /* Remove padding */
+}
+
+#title-wrapper {
+    /* Container for the scrolling text */
+    overflow: hidden;
+    max-width: 100%;  /* Adjust based on your layout */
+    position: relative;
+}
+
+#artist {
+    font-size: 42px;
+    font-weight: 500;
+    margin-bottom: 20px;
+}
+
+#album {
+    font-size: 28px;
+    font-weight: 500;
+    font-style: italic;
+}
+
+
+/* Animations */
+.hidden {
+    display: none !important;
+}
+
+.fade-in {
+    animation: fadeIn 0.5s ease-in;
+}
+
+.fade-out {
+    animation: fadeOut 0.5s ease-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeOut {
+    from {
+        opacity: 1;
+        transform: translateY(0);
+    }
+    to {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+}
+
+@keyframes scroll-left {
+    0% {
+        transform: translateX(0);
+    }
+    100% {
+        transform: translateX(calc(-50%));  /* Move by half since text is duplicated */
+    }
+}
+
+.info {
+    transition: opacity 0.3s ease, transform 0.3s ease;
+}
