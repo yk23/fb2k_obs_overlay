@@ -17,9 +17,25 @@ Example:
 
 # How to use
 
+This overlay works with **ANY** music player that has been configured to log the currently playing song's metadata into the following format:
+```json
+{
+  "title": "my_song_title",
+  "artist": "my_song_artist",
+  "album": "my_song_album",
+  "track_number": "my_track_number",
+  "duration": song_duration_float,
+  "file_path": "song_local_filepath",
+  "play_status": "playing|stopped|paused|none"
+}
+```
+The provided jscript_panel_current_playing.js outputs the above metadata when playback is initiated, paused, or stopped.
+
+## Main instructions (foobar2000 integration)
 1. Install a portable version of [foobar2000](https://www.foobar2000.org/), along with the "JScript Panel 3" extension.
 2. Add the JScript panel to the foobar2000 GUI, and copy-paste the provided `jscript_panel_current_playing.js`.
-3. Run the provided executable, noting the foobar2000's output `now_playing.json` file that appears when you start song playback. e.g. on Windows:
+3. Copy-paste the executable into the foobar2000 program directory. The overlay program (by default) assumes that is located in the same directory as "foobar2000.exe". 
+Alternatively: Run the provided executable, noting the foobar2000's output `now_playing.json` file that appears when you start song playback. e.g. on Windows:
 ```
 > NowPlayingWebOverlay.exe --json-path <FB2k_INSTALLATION_DIR>\\profile\\now_playing.json
 
