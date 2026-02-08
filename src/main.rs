@@ -22,7 +22,8 @@ struct Args {
     /// Use the provided jscript_panel_current_playing.js to produce it.
     /// Note that the path may depend in whether or not you're using a portable installation
     /// of foobar2000.
-    #[arg(short, long, value_name = "FILE", required = true)]
+    /// By default, assumes that this executable is located directly inside the "foobar2000" install directory.
+    #[arg(short, long, value_name = "FILE", default_value = "./profile/now_playing.json")]
     json_path: PathBuf,
 
     /// The local IP address to bind to.
