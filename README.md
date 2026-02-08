@@ -8,7 +8,7 @@ Integrates with a local media library! The only requirement is that songs are lo
 (e.g. albums) that contain a cover image (either 'cover', 'folder' or 'front', with .jpg or .png extensions.)
 However, the provided .js file makes it most convenient for a portable installation of [foobar2000](https://www.foobar2000.org/).
 
-Example: 
+Currently supported schemes: 
 ```
 <arbitrary parent structure>/
 |-- my_album/
@@ -16,6 +16,20 @@ Example:
     |-- track2.mp4
     |-- track3.mp4
     |-- cover.jpg
+```
+
+```
+<arbitrary parent structure>/
+|-- my_album/
+    |-- cover.jpg
+    |-- CD1/
+        |-- track1.mp4
+        |-- track2.mp4
+        |-- track3.mp4
+    |-- CD2/
+        |-- track1.mp4
+        |-- track2.mp4
+        |-- track3.mp4
 ```
 
 # How to use
