@@ -33,7 +33,7 @@ function writeNowPlaying(metadb) {
     if (fileInfo) {
         data.status = "playing";
         data.title = fileInfo.MetaValue(fileInfo.MetaFind("title"), 0) || "";
-        data.artist = fileInfo.MetaValue(fileInfo.MetaFind("artist"), 0) || "";
+        data.artist = fileInfo.MetaValue(fileInfo.MetaFind("album artist"), 0) || "";
         data.album = fileInfo.MetaValue(fileInfo.MetaFind("album"), 0) || "";
         data.track_number = fileInfo.MetaValue(fileInfo.MetaFind("tracknumber"), 0) || "";
     }
