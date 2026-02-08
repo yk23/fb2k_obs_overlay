@@ -2,6 +2,8 @@
 
 A simple "Now Playing" browser-based overlay for OBS.
 
+![Screenshot](overlay_screenshot.png)
+
 Integrates with a local media library! The only requirement is that songs are locally distributed into folders 
 (e.g. albums) that contain a cover image (either 'cover', 'folder' or 'front', with .jpg or .png extensions.)
 
