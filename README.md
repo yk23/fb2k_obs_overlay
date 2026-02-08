@@ -6,6 +6,7 @@ A simple "Now Playing" browser-based overlay for OBS.
 
 Integrates with a local media library! The only requirement is that songs are locally distributed into folders 
 (e.g. albums) that contain a cover image (either 'cover', 'folder' or 'front', with .jpg or .png extensions.)
+However, the provided .js file makes it most convenient for a portable installation of [foobar2000](https://www.foobar2000.org/).
 
 Example: 
 ```
@@ -19,7 +20,8 @@ Example:
 
 # How to use
 
-This overlay works with **ANY** music player that has been configured to log the currently playing song's metadata into the following format:
+This overlay works with **ANY** music player that has been configured to log the currently playing song's metadata 
+into the following format:
 ```json
 {
   "title": "my_song_title",
@@ -31,7 +33,8 @@ This overlay works with **ANY** music player that has been configured to log the
   "play_status": "playing|stopped|paused|none"
 }
 ```
-The provided jscript_panel_current_playing.js outputs the above metadata when playback is initiated, paused, or stopped.
+The provided jscript_panel_current_playing.js, meant to be used by the fb2k extension "JScript Panel 3", outputs the 
+above metadata when playback is initiated, paused, or stopped.
 
 ## Main instructions (foobar2000 integration)
 1. Install a portable version of [foobar2000](https://www.foobar2000.org/), along with the "JScript Panel 3" extension.
