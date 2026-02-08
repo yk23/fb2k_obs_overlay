@@ -1,7 +1,10 @@
 [package]
 name = "NowPlayingWebOverlay"
-version = "0.1.0"
+version = "1.0.0"
 edition = "2024"
+license = "LICENSE.txt"
+keywords = ["streaming", "music", "overlay", "webserver"]
+
 
 [dependencies]
 log = { version = "0.4" }
