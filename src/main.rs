@@ -35,7 +35,7 @@ struct Args {
     port: u16,
 
     /// The browser overlay display width.
-    #[arg(long, default_value_t = 900, value_name="WIDTH")]
+    #[arg(long, default_value_t = 700, value_name="WIDTH")]
     width: u64,
 
     /// The browser overlay display height.

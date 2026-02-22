@@ -1,10 +1,9 @@
 // JScript Panel 3 script - saves current track to JSON
-// For use in Foobar2000 --- https://hydrogenaudio.org/index.php/topic,110516.msg1067716.html#msg1067716
 var ENABLED = true;
 var outputPath = fb.ProfilePath + "now_playing.json";
 
 function on_playback_new_track(metadb) {
-    writeNowPlaying(metadb);
+    writeNowPlaying(metadb, "playing");
 }
 
 function on_playback_stop(reason) {
@@ -13,7 +12,39 @@ function on_playback_stop(reason) {
     }
 }
 
-function writeNowPlaying(metadb) {
+function on_playback_pause(state) {
+    var metadb = fb.GetNowPlaying();
+    if (metadb) {
+        writeNowPlaying(metadb, state ? "paused" : "playing");
+    }
+}
+
+
+function writeFile(path, content) {
+    try {
+        var stream = new ActiveXObject("ADODB.Stream");
+        stream.Type = 2; // Text
+        stream.Charset = "UTF-8";
+        stream.Open();
+        stream.WriteText(content);
+        stream.SaveToFile(path, 2); // Overwrite
+        stream.Close();
+    } catch(e) {
+        fb.trace("Error writing file: " + e);
+    }
+}
+
+
+function getMetaValue(fileInfo, fieldname) {
+    try {
+        return fileInfo.MetaValue(fileInfo.MetaFind(fieldname), 0) || "";
+    } catch (error) {
+        return ""
+    }
+}
+
+
+function writeNowPlaying(metadb, playStatus) {
     if (!ENABLED)
         return;
     if (!metadb)
@@ -31,28 +62,21 @@ function writeNowPlaying(metadb) {
     // Get metadata
     var fileInfo = metadb.GetFileInfo();
     if (fileInfo) {
-        data.status = "playing";
-        data.title = fileInfo.MetaValue(fileInfo.MetaFind("title"), 0) || "";
-        data.artist = fileInfo.MetaValue(fileInfo.MetaFind("album artist"), 0) || "";
-        data.album = fileInfo.MetaValue(fileInfo.MetaFind("album"), 0) || "";
-        data.track_number = fileInfo.MetaValue(fileInfo.MetaFind("tracknumber"), 0) || "";
+        data.play_status = playStatus;
+        data.title = getMetaValue(fileInfo, "title");
+        data.artist = getMetaValue(fileInfo, "album artist");
+        data.album = getMetaValue(fileInfo, "album");
+        data.track_number = getMetaValue(fileInfo, "tracknumber");
     }
 
     var json = JSON.stringify(data, null, 2);
-
-    try {
-        var fso = new ActiveXObject("Scripting.FileSystemObject");
-        var file = fso.CreateTextFile(outputPath, true);
-        file.Write(json);
-        file.Close();
-    } catch(e) {
-        fb.trace("Error writing JSON: " + e);
-    }
+    writeFile(outputPath, json);
 }
+
 
 function clearNowPlaying() {
     var emptyData = {
-        status: "stopped",
+        play_status: "stopped",
         title: "",
         artist: "",
         album: "",
@@ -62,18 +86,10 @@ function clearNowPlaying() {
     };
 
     var json = JSON.stringify(emptyData, null, 2);
-
-    try {
-        var fso = new ActiveXObject("Scripting.FileSystemObject");
-        var file = fso.CreateTextFile(outputPath, true);
-        file.Write(json);
-        file.Close();
-    } catch(e) {
-        fb.trace("Error clearing JSON: " + e);
-    }
+    writeFile(outputPath, json);
 }
 
 // Initialize on load
 if (fb.IsPlaying) {
-    writeNowPlaying(fb.GetNowPlaying());
+    writeNowPlaying(fb.GetNowPlaying(), "playing");
 }
