@@ -1,15 +1,17 @@
 use std::{
-    fs,
     io::{BufReader, prelude::*},
     net::{TcpStream},
-    path::{Path, PathBuf},
+    path::{PathBuf},
 };
 use askama::Template;
 use log::{debug, error};
 use crate::assets::load_default_album_art;
 use crate::media_info::{
     json::deserialize_json_file,
-    metadata::MediaMetadata
+    metadata::MediaMetadata,
+    album_art::{
+        embedded_album_art, external_album_art, ImageFormat
+    }
 };
 use crate::templates::*;
 
@@ -43,6 +45,18 @@ impl HttpContentType {
 }
 
 
+impl From<ImageFormat> for HttpContentType {
+    fn from(value: ImageFormat) -> Self {
+        match value {
+            ImageFormat::PNG => HttpContentType::ImagePng,
+            ImageFormat::JPEG => HttpContentType::ImageJpeg,
+            ImageFormat::GIF => HttpContentType::ImageGif,
+            ImageFormat::WEBP => HttpContentType::ImageWebp,
+        }
+    }
+}
+
+
 struct HttpResponse {
     status_code: u16,
     content: Option<Vec<u8>>,
@@ -67,22 +81,22 @@ impl HttpResponse {
         Self::new(500, format!("Internal Server Error: {}", msg), HttpContentType::TextPlain)
     }
 
-    fn from_image_file(img_path: &Path) -> Result<Self, String> {
-        let image_data = fs::read(img_path).map_err(|err| err.to_string())?;
-        let content_type = match img_path.extension().and_then(|s| s.to_str()) {
-            Some("png") => HttpContentType::ImagePng,
-            Some("jpg") | Some("jpeg") => HttpContentType::ImageJpeg,
-            Some("gif") => HttpContentType::ImageGif,
-            Some("webp") => HttpContentType::ImageWebp,
-            _ => return Err("Unknown image extension".to_owned())
-        };
-
-        Ok(Self {
-            status_code: 200,
-            content: Some(image_data),
-            content_type: Some(content_type),
-        })
-    }
+    // fn from_image_file(img_path: &Path) -> Result<Self, String> {
+    //     let image_data = fs::read(img_path).map_err(|err| err.to_string())?;
+    //     let content_type = match img_path.extension().and_then(|s| s.to_str()) {
+    //         Some("png") => HttpContentType::ImagePng,
+    //         Some("jpg") | Some("jpeg") => HttpContentType::ImageJpeg,
+    //         Some("gif") => HttpContentType::ImageGif,
+    //         Some("webp") => HttpContentType::ImageWebp,
+    //         _ => return Err("Unknown image extension".to_owned())
+    //     };
+    //
+    //     Ok(Self {
+    //         status_code: 200,
+    //         content: Some(image_data),
+    //         content_type: Some(content_type),
+    //     })
+    // }
 }
 
 
@@ -306,20 +320,25 @@ impl NowPlayingServer {
             return HttpResponse::new(404, "No metadata found", HttpContentType::TextPlain);
         };
 
-        let Some(album_art_path) = metadata.find_album_art_path() else {
-            error!("No album art found! Returning fallback art.");
-            let default_art = load_default_album_art();
-            return HttpResponse::new(200, default_art, HttpContentType::ImagePng);
+        match embedded_album_art(&metadata.file_path) {
+            None => {}
+            Some(art) => {
+                debug!("Found embedded art for {}", metadata.file_path.display());
+                return HttpResponse::new(200, art.image, art.format.into());
+            }
         };
 
-        HttpResponse::from_image_file(&album_art_path)
-            .unwrap_or_else(
-                |err| {
-                    error!("Image IO error: {}", err);
-                    let default_art = load_default_album_art();
-                    return HttpResponse::new(200, default_art, HttpContentType::ImagePng);
-                }
-            )
+        match external_album_art(&metadata.file_path) {
+            None => {}
+            Some(art) => {
+                debug!("Found external art for {}", metadata.file_path.display());
+                return HttpResponse::new(200, art.image, art.format.into());
+            }
+        };
+
+        debug!("No album art found for {}. Using fallback art.", metadata.file_path.display());
+        let default_art = load_default_album_art();
+        HttpResponse::new(200, default_art, HttpContentType::ImagePng)
     }
 
     fn serve_metadata(&mut self) -> HttpResponse {
